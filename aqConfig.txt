@@ -1,0 +1,19 @@
+{
+    "TargetPackageName": "aqcxbom.cracktools",
+    "TargetClassPath": "bbbb",
+    "TargetFuncName": "ccccccc",
+    "par": [
+        {
+            "name": "Google",
+            "url": "http://www.google.com"
+        },
+        {
+            "name": "Baidu",
+            "url": "http://www.baidu.com"
+        },
+        {
+            "name": "SoSo",
+            "url": "http://www.SoSo.com"
+        }
+    ]
+}

@@ -1,0 +1,78 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "26.0.0"
+    defaultConfig {
+        applicationId "aqcxbom.xposedexample"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.0.1'
+    testCompile 'junit:junit:4.12'
+    provided files('src/main/lib/XposedBridgeApi-54.jar')
+}
+
+def DEX_DIR = "/sdcard/"
+
+task pushDex << {
+
+    def cmd = "${getAdbPath()}adb push ${project.getBuildDir().getPath()}/intermediates/transforms/dex/debug/folders/1000/1f/main/classes.dex $DEX_DIR"
+    cmd.execute()
+
+    println "cmd is $cmd"
+    println "push success"
+
+//    def cmd2 = "${getAdbPath()}adb shell chmod 777 $DEX_DIR/classes.dex"
+//    cmd.execute()
+}
+
+task pushConfig << {
+    def cmd = "${getAdbPath()}adb push ${project.rootDir}/aqConfig.txt /data/local/tmp"
+    cmd.execute()
+
+    println "cmd is $cmd"
+    println "push success"
+}
+
+pushDex {}.dependsOn "transformClassesWithDexForDebug"
+
+def getAdbPath() {
+    def rootDir = project.rootDir
+    def localProperties = new File(rootDir, "local.properties")
+    def sdkDir = null;
+    if (localProperties.exists()) {
+        Properties properties = new Properties()
+        localProperties.withInputStream { instr ->
+            properties.load(instr)
+        }
+        sdkDir = properties.getProperty('sdk.dir')
+    }
+    if (sdkDir == null || !(new File(sdkDir).exists())) {
+        sdkDir = android.getSdkDirectory().getAbsolutePath()
+    }
+    if (sdkDir == null || !(new File(sdkDir).exists())) {
+        sdkDir = android.plugin.getSdkFolder().getAbsolutePath()
+    }
+    def adbDir = sdkDir + File.separator + "platform-tools" + File.separator
+    if (new File(adbDir).exists()) {
+        return adbDir;
+    }
+    return ""
+}

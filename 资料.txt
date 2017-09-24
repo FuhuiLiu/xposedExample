@@ -1,0 +1,9 @@
+https://xianzhi.aliyun.com/forum/read/611.html
+
+Xposed也要热更新
+https://juejin.im/post/58f6e6b4da2f60005d4c3168
+
+基于Xposed和Substrate的通用性SO注入
+http://blog.csdn.net/asmcvc/article/details/54311409
+
+https://github.com/zjw-swun/AppMethodOrder
