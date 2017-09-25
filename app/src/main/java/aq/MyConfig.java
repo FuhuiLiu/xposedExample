@@ -4,9 +4,7 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 
 import de.robv.android.xposed.XposedBridge;
 
