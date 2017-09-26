@@ -38,6 +38,7 @@ public class MyConfig {
                 TargetPackageName = jobj.getString("TargetPackageName");
                 TargetClassPath = jobj.getString("TargetClassPath");
                 TargetFuncName = jobj.getString("TargetFuncName");
+                LogUtil.isLogFile = jobj.getBoolean("isLogFIle");
 //                LOGI("配置文件目标包名 >>> " + TargetPackageName);
 //                LOGI("配置文件目标类路径 >>> " + TargetClassPath);
 //                LOGI("配置文件目标函数名 >>> " + TargetFuncName);

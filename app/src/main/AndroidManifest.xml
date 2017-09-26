@@ -20,5 +20,6 @@
         <meta-data android:name="xposeddescription" android:value="xposed基本框架"/>
         <meta-data android:name="xposedminversion" android:value="45"/>
     </application>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" ></uses-permission>
 
 </manifest>

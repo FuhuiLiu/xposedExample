@@ -10,11 +10,14 @@ import android.util.Log;
 import java.io.Externalizable;
 import java.io.File;
 
+import dalvik.system.DexClassLoader;
 import dalvik.system.DexFile;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+
+import static aq.LogUtil.log;
 
 /**
  * Created by Administrator on 2017/9/25 0025.
@@ -37,7 +40,7 @@ public class HookUtils {
 //                lpparam.classLoader), "getPackageInfo", DebugAllAppHook);
     }
 
-    public static void log(String ct) {
+    public static void xlog(String ct) {
         XposedBridge.log(ct);
     }
 
@@ -47,7 +50,7 @@ public class HookUtils {
         StackTraceElement[] tree = ep.getStackTrace();
         log("=================当前函数调用栈=================");
         for (StackTraceElement se:tree){
-            log(se.getClassName() + ":->" + se.getMethodName() + " ==> " + se.getFileName() +  ":" + se.getLineNumber());
+            log(se.getClassName() + ":->" + se.getMethodName() + "(" + se.getFileName() +  ":" + se.getLineNumber() + ")");
         }
         log("=================当前函数调用栈=================");
     }
@@ -55,31 +58,25 @@ public class HookUtils {
     public static XC_MethodHook hook = new XC_MethodHook() {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-            log("getPath:" + Environment.getExternalStorageDirectory().getPath());
-            String dexPath = "/data/local/tmp/classes.zip";
+            String dexPath = Environment.getExternalStorageDirectory() + File.separator + "classes.dex";
             File file = new File(dexPath);
             if(file.exists()){
-                log("file exist!!");
-            }
-            log("dexPath:" + dexPath);
-            try {
-                DexFile df = new DexFile(dexPath);
-                Class clazz = df.loadClass("aq.HotFix", loader);
-                if (clazz != null) {
-                    clazz.getDeclaredMethod("invokeB").invoke(null);
+                log("file exist:" + dexPath);
+
+                try {
+                    DexClassLoader newLoader = new DexClassLoader(dexPath, context.getFilesDir().getAbsolutePath(), null, loader);
+                    Class clazz = newLoader.loadClass("aq.HotFix");
+                    if (clazz != null) {
+                        clazz.getDeclaredMethod("invokeB").invoke(null);
+                    }
+                }catch(Exception e){
+                    e.printStackTrace();
                 }
-            }catch(Exception e){
-                e.printStackTrace();
             }
         }
 
         @Override
         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-            DexFile df = new DexFile("/data/local/tmp" + "/classes.zip");
-            Class clazz = df.loadClass("aq.HotFix", loader);
-            if(clazz != null){
-                clazz.getDeclaredMethod("invokeA").invoke(null);
-            }
         }
     };
 
